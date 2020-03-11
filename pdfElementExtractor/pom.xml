@@ -13,7 +13,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <exec.mainClass>
-      com.curtisnewbie.App
+      com.curtisnewbie.main.App
       </exec.mainClass>
   </properties>
 
