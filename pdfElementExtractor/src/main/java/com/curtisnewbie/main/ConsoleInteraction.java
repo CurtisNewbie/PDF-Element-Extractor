@@ -18,7 +18,6 @@ public class ConsoleInteraction {
     public static final Scanner sc = new Scanner(System.in);
 
     static void displayIntro() {
-        System.out.println("/*");
         System.out.println("------------------------------------");
         System.out.println();
         System.out.println("PDF Elements Extractor powered by Apache PDFBox");
@@ -26,7 +25,6 @@ public class ConsoleInteraction {
         System.out.println("Yongjie Zhuang");
         System.out.println();
         System.out.println("------------------------------------");
-        System.out.println("*/");
     }
 
     /**
