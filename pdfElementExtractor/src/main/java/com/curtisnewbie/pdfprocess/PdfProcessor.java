@@ -3,12 +3,21 @@ package com.curtisnewbie.pdfprocess;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.awt.image.*;
 
 import com.curtisnewbie.main.LoggerProducer;
 
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 /**
@@ -68,6 +77,63 @@ public class PdfProcessor {
     public String extractText() {
         var pages = pdfDoc.getNumberOfPages();
         return extractText(1, pages);
+    }
+
+    /**
+     * Extract all images in the PDF document
+     * 
+     * @return all images in a List
+     */
+    public List<BufferedImage> extractImages() {
+        var pages = pdfDoc.getNumberOfPages();
+        return extractImages(1, pages);
+    }
+
+    /**
+     * Extract all images in the specified pages
+     * 
+     * @param from from which page (starting at 1)
+     * @param to   to which page (inclusive)
+     * @return all images in the specified pages
+     */
+    public List<BufferedImage> extractImages(int from, int to) {
+        logger.info(String.format("Extracting images from pages %d-%d", from, to));
+        var pages = pdfDoc.getNumberOfPages();
+        if (from <= 0 || to > pages) {
+            return null;
+        }
+
+        List<BufferedImage> images = new ArrayList<>();
+        for (int i = from; i < to; i++) {
+            var currPage = pdfDoc.getPage(i);
+            images.addAll(extractImagesInPage(currPage));
+        }
+        return images;
+    }
+
+    private List<BufferedImage> extractImagesInPage(PDPage page) {
+        List<BufferedImage> images = new ArrayList<>();
+        PDResources resources = page.getResources();
+        images.addAll(extractImagesInResources(resources));
+        return images;
+    }
+
+    private List<BufferedImage> extractImagesInResources(PDResources resources) {
+        List<BufferedImage> images = new ArrayList<>();
+        // iterate the external objects (e.g., images) in this resources of this page
+        for (COSName objName : resources.getXObjectNames()) {
+            try {
+                PDXObject obj = resources.getXObject(objName);
+                if (obj instanceof PDFormXObject)
+                    // nested xObject, do recursion
+                    images.addAll(extractImagesInResources(((PDFormXObject) obj).getResources()));
+                else if (obj instanceof PDImageXObject)
+                    images.add(((PDImageXObject) obj).getImage());
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Error when extracting image in page, skipping...");
+            }
+        }
+        return images;
     }
 
     /**

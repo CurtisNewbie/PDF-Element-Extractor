@@ -21,7 +21,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  */
 public class App {
 
-    static final Logger logger = LoggerProducer.getLogger("App");
+    static final Logger logger = LoggerProducer.getLogger(App.class.getName());
 
     public static void main(String[] args) {
         PdfProcessor pdfProcessor = null;
@@ -38,6 +38,17 @@ public class App {
             var allText = pdfProcessor.extractText();
             if (allText != null)
                 IOManager.writeElementToFile(param.getTo(), allText, "extractedText.txt");
+
+            // extract all images
+            var allImages = pdfProcessor.extractImages();
+            if (allImages.size() == 0) {
+                logger.info("No image Found");
+            } else {
+                int count = 0;
+                for (var img : allImages) {
+                    IOManager.writeElementToFile(param.getTo(), img, "extractedImage" + (count++));
+                }
+            }
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage());
         } finally {
