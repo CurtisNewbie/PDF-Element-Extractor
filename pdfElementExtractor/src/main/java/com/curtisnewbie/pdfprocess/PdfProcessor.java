@@ -70,6 +70,47 @@ public class PdfProcessor {
     }
 
     /**
+     * Extract all text in the specified pages and put every N pages (e.g., 1)
+     * together into a string.
+     * 
+     * @param from  from which page (starting at 1)
+     * @param to    to which page (inclusive)
+     * @param every the string that every N pages should be put together
+     * @return all text in the specified pages
+     */
+    public List<String> extractText(int from, int to, int every) {
+        var pages = pdfDoc.getNumberOfPages();
+        if (from <= 0 || to > pages) {
+            return null;
+        }
+        if (to - from + 1 < every) {
+            every = to - from + 1;
+        }
+
+        List<String> list = new ArrayList<>();
+        for (int i = from; i < to; i += every + 1) {
+            // remaining pages
+            if (i + every > to && i < to) {
+                list.add(extractText(i, to));
+            }
+            list.add(extractText(i, i + every));
+        }
+        return list;
+    }
+
+    /**
+     * Extract all text in this PDF document, and put every N pages together into a
+     * string
+     * 
+     * @param every the string that every N pages should be put together
+     * @return all text in the specified pages
+     */
+    public List<String> extractText(int every) {
+        var pages = pdfDoc.getNumberOfPages();
+        return extractText(1, pages, every);
+    }
+
+    /**
      * Extract all text in the PDF document
      * 
      * @return all text in the PDF document

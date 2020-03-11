@@ -35,9 +35,12 @@ public class App {
             pdfProcessor = new PdfProcessor(doc);
 
             // extract all textual data
-            var allText = pdfProcessor.extractText();
-            if (allText != null)
-                IOManager.writeElementToFile(param.getTo(), allText, "extractedText.txt");
+            var allText = pdfProcessor.extractText(1);
+            if (allText != null) {
+                int count = 0;
+                for (var t : allText)
+                    IOManager.writeElementToFile(param.getTo(), t, "page" + (count++) + ".txt");
+            }
 
             // extract all images
             var allImages = pdfProcessor.extractImages();
@@ -46,7 +49,7 @@ public class App {
             } else {
                 int count = 0;
                 for (var img : allImages) {
-                    IOManager.writeElementToFile(param.getTo(), img, "extractedImage" + (count++));
+                    IOManager.writeElementToFile(param.getTo(), img, "img" + (count++));
                 }
             }
         } catch (IOException e) {
