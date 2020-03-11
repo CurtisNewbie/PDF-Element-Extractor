@@ -1,5 +1,15 @@
 package com.curtisnewbie.main;
 
+/**
+ * ------------------------------------
+ * 
+ * Author: Yongjie Zhuang
+ * 
+ * ------------------------------------
+ * <p>
+ * Object that stores the input and output file paths
+ * </p>
+ */
 public class Parameters {
 
     private String from;
