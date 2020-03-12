@@ -36,6 +36,8 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
+        primaryStage.setMinWidth(1060);
+        primaryStage.setMinHeight(600);
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> {
             System.exit(0);
