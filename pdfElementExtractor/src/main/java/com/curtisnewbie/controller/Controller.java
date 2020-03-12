@@ -2,7 +2,12 @@ package com.curtisnewbie.controller;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.awt.image.*;
 
 import com.curtisnewbie.io.IOManager;
 import com.curtisnewbie.main.App;
@@ -92,48 +97,47 @@ public class Controller implements Initializable {
             var from = getFromPath();
             var to = getToPath();
             if (from != null && to != null) {
-                Platform.runLater(() -> {
-                    PdfProcessor pdfProcessor = null;
-                    try {
-                        var document = IOManager.readPdfFile(getFromPath());
-                        pdfProcessor = new PdfProcessor(document);
+                PdfProcessor pdfProcessor = null;
+                try {
+                    // extract data
+                    var document = IOManager.readPdfFile(getFromPath());
+                    pdfProcessor = new PdfProcessor(document);
+                    var allText = extractAllText(pdfProcessor).get();
+                    var allImages = extractAllImages(pdfProcessor).get();
 
+                    // update treeview when extraction completes
+                    Platform.runLater(() -> {
                         var rootNode = setRootToOutputTreeView("ExtractedFiles");
                         var textNode = new TreeItem<String>("Text:");
                         addChildToParent(rootNode, textNode);
-
-                        var allText = pdfProcessor.extractText(1);
-                        var allImages = pdfProcessor.extractImages();
-
-                        if (allText != null) {
-                            int count = 0;
-                            for (var txt : allText) {
-                                var path = IOManager.writeElementToFile(to, txt, "page" + (count++) + ".txt");
-                                addChildToParent(textNode, new TreeItem<String>(path));
-                            }
-                        }
-
                         var imgNode = new TreeItem<String>("Images:");
                         addChildToParent(rootNode, imgNode);
-
-                        if (allImages != null) {
-                            int count = 0;
-                            for (var img : allImages) {
-                                var path = IOManager.writeElementToFile(to, img, "img" + (count++));
-                                addChildToParent(imgNode, new TreeItem<String>(path));
+                        try {
+                            var pathsOfText = writeAllTextFiles(allText, to).get();
+                            for (var p : pathsOfText) {
+                                addChildToParent(textNode, new TreeItem<String>(p));
                             }
+                        } catch (Exception ex) {
                         }
-                    } catch (Exception excep) {
-                        var alert = new Alert(AlertType.ERROR);
-                        alert.setContentText(excep.getMessage());
-                        alert.showAndWait();
-                    } finally {
-                        if (pdfProcessor != null)
-                            pdfProcessor.close();
-                    }
-                });
+                        try {
+                            var pathsOfImg = writeAllImgFiles(allImages, to).get();
+                            for (var p : pathsOfImg) {
+                                addChildToParent(imgNode, new TreeItem<String>(p));
+                            }
+                        } catch (Exception ex) {
+                        }
+                    });
+                } catch (Exception excep) {
+                    var alert = new Alert(AlertType.ERROR);
+                    alert.setContentText(excep.getMessage());
+                    alert.showAndWait();
+                } finally {
+                    if (pdfProcessor != null)
+                        pdfProcessor.close();
+                }
             }
         });
+
     }
 
     /**
@@ -228,4 +232,93 @@ public class Controller implements Initializable {
         File selectedDir = dirChooser.showDialog(App.getPrimaryStage());
         return selectedDir;
     }
+
+    /**
+     * Extract all text in the pdf file
+     * 
+     * @param processor PdfProcessor
+     * @return a list of String, where each represents all the text in the page
+     */
+    private Future<List<String>> extractAllText(PdfProcessor processor) {
+        CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
+        synchronized (processor) {
+            new Thread(() -> {
+                var res = processor.extractText(1);
+                completableFuture.complete(res);
+            }).start();
+        }
+        return completableFuture;
+    }
+
+    /**
+     * Extract all images in the pdf file
+     * 
+     * @param processor PdfProcessor
+     * @return a list of buffered images
+     */
+    private Future<List<BufferedImage>> extractAllImages(PdfProcessor processor) {
+        CompletableFuture<List<BufferedImage>> completableFuture = new CompletableFuture<>();
+        synchronized (processor) {
+            new Thread(() -> {
+                var res = processor.extractImages();
+                completableFuture.complete(res);
+            }).start();
+        }
+        return completableFuture;
+    }
+
+    /**
+     * Write all text to a specified directory, this method takes advantage of
+     * multi-threading
+     * 
+     * @param allText a list of text
+     * @param to      an absolute path to a directory
+     * @return a list of absolute paths of these text files
+     */
+    private Future<List<String>> writeAllTextFiles(List<String> allText, String to) {
+        CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
+        new Thread(() -> {
+            List<String> paths = new ArrayList<>();
+            if (allText != null) {
+                int count = 0;
+                for (var txt : allText) {
+                    try {
+                        var path = IOManager.writeElementToFile(to, txt, "page" + (count++) + ".txt");
+                        paths.add(path);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            completableFuture.complete(paths);
+        }).start();
+        return completableFuture;
+    }
+
+    /**
+     * Write all images to a specified directory, this method takes advantage of
+     * multi-threading
+     * 
+     * @param allImages a list of buffered images
+     * @param to        an absolute path to a directory
+     * @return a list of absolute paths of these images
+     */
+    private Future<List<String>> writeAllImgFiles(List<BufferedImage> allImages, String to) {
+        CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
+        new Thread(() -> {
+            List<String> paths = new ArrayList<>();
+            if (allImages != null) {
+                int count = 0;
+                for (var img : allImages) {
+                    try {
+                        var path = IOManager.writeElementToFile(to, img, "img" + (count++));
+                        paths.add(path);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            completableFuture.complete(paths);
+        }).start();
+        return completableFuture;
+    }
+
 }
