@@ -20,6 +20,8 @@ import javafx.scene.Scene;
 public class App extends Application {
 
     static final Logger logger = LoggerProducer.getLogger(App.class.getName());
+    static Stage primaryStage;
+
     private Parent root;
 
     @Override
@@ -34,6 +36,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        App.primaryStage = primaryStage;
+
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(1060);
@@ -47,5 +51,9 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
     }
 }
