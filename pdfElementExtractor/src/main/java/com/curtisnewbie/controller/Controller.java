@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.awt.Desktop;
 import java.awt.image.*;
 
 import com.curtisnewbie.io.IOManager;
@@ -58,11 +59,15 @@ public class Controller implements Initializable {
     @FXML
     private TreeView<String> outputTreeView;
 
+    @FXML
+    private Button openDirBtn;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.registerChooseFileEventHandler();
         this.registerChooseDirEventHandler();
         this.registerExtractAllEventHandler();
+        this.registerOpenDirEventHandler();
     }
 
     /**
@@ -85,6 +90,26 @@ public class Controller implements Initializable {
             File selectedFile = useDirChooser("Select directory/folder");
             if (selectedFile != null) {
                 setToPath(selectedFile.getAbsolutePath());
+            }
+        });
+    }
+
+    /**
+     * Register event handler for openDirBtn
+     */
+    public void registerOpenDirEventHandler() {
+        this.openDirBtn.setOnAction(e -> {
+            var dirPath = getToPath();
+            var file = new File(dirPath);
+            if (Desktop.isDesktopSupported() && dirPath != null && dirPath.length() > 0 && file.exists()) {
+                new Thread(() -> {
+                    Desktop desktop = Desktop.getDesktop();
+                    try {
+                        desktop.open(file);
+                    } catch (Exception excep) {
+                        System.out.println(excep);
+                    }
+                }).start();
             }
         });
     }

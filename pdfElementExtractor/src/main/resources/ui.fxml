@@ -72,6 +72,7 @@
                 <Button fx:id="extractAllBtn" layoutX="467.0" layoutY="513.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Extract All" AnchorPane.leftAnchor="467.0" AnchorPane.topAnchor="513.0" />
                 <Button fx:id="chooseFileBtn" layoutX="481.0" layoutY="180.0" mnemonicParsing="false" text="Choose File" AnchorPane.leftAnchor="481.0" AnchorPane.topAnchor="180.0" />
                 <Button fx:id="chooseDirBtn" layoutX="481.0" layoutY="303.0" mnemonicParsing="false" text="Choose Directory" AnchorPane.leftAnchor="481.0" AnchorPane.topAnchor="303.0" />
+                <Button fx:id="openDirBtn" layoutX="315.0" layoutY="513.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Open Directory" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="513.0" />
             </children>
         </AnchorPane>
     </children>
