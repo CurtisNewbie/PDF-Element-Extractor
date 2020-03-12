@@ -53,7 +53,7 @@ public class IOManager {
      * @throws IOException
      * 
      */
-    public static void writeElementToFile(String path, String text, String filename)
+    public static String writeElementToFile(String path, String text, String filename)
             throws IOException, PdfNotFoundException {
         var file = validateAndCreateFile(path);
         var strPath = file.getAbsolutePath();
@@ -63,7 +63,7 @@ public class IOManager {
         }
         var fullPath = Paths.get(textDir.getAbsolutePath(), filename);
         Files.writeString(fullPath, text);
-        System.out.println(String.format("Textual data written to \"%s\"", fullPath));
+        return fullPath.toString();
     }
 
     /**
@@ -77,7 +77,7 @@ public class IOManager {
      * @throws IOException
      * 
      */
-    public static void writeElementToFile(String path, BufferedImage image, String filename)
+    public static String writeElementToFile(String path, BufferedImage image, String filename)
             throws IOException, PdfNotFoundException {
         var file = validateAndCreateFile(path);
         var strPath = file.getAbsolutePath();
@@ -89,7 +89,7 @@ public class IOManager {
         // write image to local file
         var fullPath = Paths.get(textDir.getAbsolutePath(), filename);
         ImageIO.write(image, "png", new File(fullPath.toString()));
-        System.out.println(String.format("Image data written to \"%s\"", fullPath));
+        return fullPath.toString();
     }
 
     static File validateAndCreateFile(String path) throws PdfNotFoundException {
