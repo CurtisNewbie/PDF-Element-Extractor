@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 import java.awt.Desktop;
 import java.awt.image.*;
 
 import com.curtisnewbie.io.IOManager;
 import com.curtisnewbie.main.App;
+import com.curtisnewbie.main.LoggerProducer;
 import com.curtisnewbie.pdfprocess.PdfProcessor;
 
 import javafx.application.Platform;
@@ -40,6 +42,8 @@ import javafx.stage.FileChooser;
  * 
  */
 public class Controller implements Initializable {
+
+    final Logger logger = LoggerProducer.getLogger(Controller.class.getName());
 
     @FXML
     private Button chooseFileBtn;
@@ -75,6 +79,7 @@ public class Controller implements Initializable {
      */
     public void registerChooseFileEventHandler() {
         this.chooseFileBtn.setOnAction(e -> {
+            logger.info("Choosing pdf file");
             File selectedFile = useFileChooser("Select PDF file");
             if (selectedFile != null) {
                 setFromPath(selectedFile.getAbsolutePath());
@@ -87,6 +92,7 @@ public class Controller implements Initializable {
      */
     public void registerChooseDirEventHandler() {
         this.chooseDirBtn.setOnAction(e -> {
+            logger.info("Choosing directory");
             File selectedFile = useDirChooser("Select directory/folder");
             if (selectedFile != null) {
                 setToPath(selectedFile.getAbsolutePath());
@@ -99,6 +105,7 @@ public class Controller implements Initializable {
      */
     public void registerOpenDirEventHandler() {
         this.openDirBtn.setOnAction(e -> {
+            logger.info("Opening directory");
             var dirPath = getToPath();
             var file = new File(dirPath);
             if (Desktop.isDesktopSupported() && dirPath != null && dirPath.length() > 0 && file.exists()) {
@@ -107,7 +114,7 @@ public class Controller implements Initializable {
                     try {
                         desktop.open(file);
                     } catch (Exception excep) {
-                        System.out.println(excep);
+                        logger.severe(excep.getMessage());
                     }
                 }).start();
             }
@@ -119,6 +126,7 @@ public class Controller implements Initializable {
      */
     public void registerExtractAllEventHandler() {
         this.extractAllBtn.setOnAction(e -> {
+            logger.info("Extracting all elements");
             var from = getFromPath();
             var to = getToPath();
             if (from != null && to != null) {
@@ -143,6 +151,7 @@ public class Controller implements Initializable {
                                 addChildToParent(textNode, new TreeItem<String>(p));
                             }
                         } catch (Exception ex) {
+                            logger.severe(ex.getMessage());
                         }
                         try {
                             var pathsOfImg = writeAllImgFiles(allImages, to).get();
@@ -150,6 +159,7 @@ public class Controller implements Initializable {
                                 addChildToParent(imgNode, new TreeItem<String>(p));
                             }
                         } catch (Exception ex) {
+                            logger.severe(ex.getMessage());
                         }
                     });
                 } catch (Exception excep) {
@@ -311,6 +321,7 @@ public class Controller implements Initializable {
                         var path = IOManager.writeElementToFile(to, txt, "page" + (count++) + ".txt");
                         paths.add(path);
                     } catch (Exception e) {
+                        logger.severe(e.getMessage());
                     }
                 }
             }
@@ -338,6 +349,7 @@ public class Controller implements Initializable {
                         var path = IOManager.writeElementToFile(to, img, "img" + (count++));
                         paths.add(path);
                     } catch (Exception e) {
+                        logger.severe(e.getMessage());
                     }
                 }
             }
