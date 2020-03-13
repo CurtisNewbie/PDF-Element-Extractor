@@ -13,20 +13,20 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="780.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.curtisnewbie.controller.Controller">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.curtisnewbie.controller.Controller">
     <columnConstraints>
         <ColumnConstraints />
         <ColumnConstraints />
-        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" percentWidth="60.0" />
-      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" percentWidth="40.0" />
+        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" percentWidth="100.0" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="420.0" minHeight="10.0" percentHeight="45.0" prefHeight="208.0" vgrow="NEVER" />
+      <RowConstraints maxHeight="217.0" minHeight="0.0" percentHeight="55.0" prefHeight="212.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
-        <BorderPane minWidth="-Infinity" GridPane.columnIndex="3">
+        <BorderPane minWidth="-Infinity" GridPane.columnIndex="2" GridPane.rowIndex="1">
             <top>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Output" textAlignment="CENTER" wrappingWidth="89.7294921875" BorderPane.alignment="CENTER">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Result" textAlignment="CENTER" wrappingWidth="89.7294921875" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="8.0" />
                     </BorderPane.margin>
@@ -38,14 +38,14 @@
          <center>
                 <TreeView fx:id="outputTreeView" prefHeight="413.0" prefWidth="293.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets bottom="10.0" left="6.0" right="10.0" />
+                  <Insets bottom="10.0" left="6.0" right="6.0" />
                </BorderPane.margin>
             </TreeView>
          </center>
         </BorderPane>
-        <AnchorPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="468.0" prefWidth="465.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS">
+        <AnchorPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS">
             <children>
-                <HBox layoutX="9.0" layoutY="117.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="445.0" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="117.0">
+                <HBox layoutX="29.0" layoutY="100.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="445.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="100.0">
                     <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Path to PDF:" textAlignment="CENTER" wrappingWidth="80.16455078125">
                             <HBox.margin>
@@ -55,7 +55,7 @@
                         <TextField fx:id="pathFromTextField" maxHeight="26.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
-                <HBox layoutX="12.0" layoutY="234.0" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="439.0" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="234.0">
+                <HBox layoutX="29.0" layoutY="190.0" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="445.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="190.0">
                     <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Path to Extracted Files: (Directory)" textAlignment="CENTER" wrappingWidth="159.16455078125">
                             <HBox.margin>
@@ -68,15 +68,15 @@
                      </HBox.margin></TextField>
                     </children>
                 </HBox>
-                <Text layoutX="34.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PDF Elements Extractor" wrappingWidth="300.7294921875" AnchorPane.bottomAnchor="409.93408203125" AnchorPane.leftAnchor="34.0" AnchorPane.rightAnchor="289.2705078125" AnchorPane.topAnchor="31.93310546875">
+                <Text layoutX="36.0" layoutY="74.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PDF Elements Extractor" wrappingWidth="300.7294921875" AnchorPane.bottomAnchor="320.8115234375" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="166.2705078125" AnchorPane.topAnchor="53.5791015625">
                     <font>
                         <Font size="22.0" />
                     </font>
                 </Text>
-                <Button fx:id="extractAllBtn" layoutX="315.0" layoutY="374.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Extract All" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="374.0" />
-                <Button fx:id="chooseFileBtn" layoutX="334.0" layoutY="175.0" mnemonicParsing="false" text="Choose File" AnchorPane.leftAnchor="334.0" AnchorPane.topAnchor="175.0" />
-                <Button fx:id="chooseDirBtn" layoutX="315.0" layoutY="294.0" mnemonicParsing="false" text="Choose Directory" AnchorPane.leftAnchor="315.0" AnchorPane.topAnchor="294.0" />
-                <Button fx:id="openDirBtn" layoutX="166.0" layoutY="374.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Open Directory" AnchorPane.leftAnchor="166.0" AnchorPane.topAnchor="374.0" />
+                <Button fx:id="extractAllBtn" layoutX="343.0" layoutY="314.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Extract All" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="314.0" />
+                <Button fx:id="chooseFileBtn" layoutX="381.0" layoutY="146.0" mnemonicParsing="false" text="Choose File" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="146.0" />
+                <Button fx:id="chooseDirBtn" layoutX="343.0" layoutY="244.0" mnemonicParsing="false" text="Choose Directory" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="244.0" />
+                <Button fx:id="openDirBtn" layoutX="186.0" layoutY="314.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Open Directory" AnchorPane.rightAnchor="186.0" AnchorPane.topAnchor="314.0" />
             </children>
         </AnchorPane>
     </children>
