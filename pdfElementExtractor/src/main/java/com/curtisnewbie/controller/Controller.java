@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.logging.Logger;
 import java.awt.Desktop;
 import java.awt.image.*;
@@ -65,6 +64,9 @@ public class Controller implements Initializable {
 
     @FXML
     private Button openDirBtn;
+
+    /** Currently used pdfProcessor */
+    private PdfProcessor pdfProcessor;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -131,45 +133,47 @@ public class Controller implements Initializable {
             var to = getToPath();
             if (from != null && to != null) {
                 showInfo("Extracting data from \"" + from + "\"");
-                PdfProcessor pdfProcessor = null;
                 try {
-                    // extract data
+                    // create pdf representation
                     var document = IOManager.readPdfFile(getFromPath());
-                    pdfProcessor = new PdfProcessor(document);
-                    var allText = extractAllText(pdfProcessor).get();
-                    var allImages = extractAllImages(pdfProcessor).get();
+                    this.pdfProcessor = new PdfProcessor(document);
 
-                    // update treeview when extraction completes
-                    Platform.runLater(() -> {
-                        var rootNode = setRootToOutputTreeView("ExtractedFiles");
-                        var textNode = new TreeItem<String>("Text:");
-                        addChildToParent(rootNode, textNode);
-                        var imgNode = new TreeItem<String>("Images:");
-                        addChildToParent(rootNode, imgNode);
-                        try {
-                            var pathsOfText = writeAllTextFiles(allText, to).get();
-                            for (var p : pathsOfText) {
+                    // init treeview
+                    var rootNode = setRootToOutputTreeView("ExtractedFiles");
+                    var textNode = new TreeItem<String>("Text:");
+                    addChildToParent(rootNode, textNode);
+                    var imgNode = new TreeItem<String>("Images:");
+                    addChildToParent(rootNode, imgNode);
+
+                    // extract and update using multi-threading and async
+                    try {
+                        extractAllText(pdfProcessor).thenCompose(allText -> {
+                            return writeAllTextFiles(allText, to);
+                        }).thenAccept((pathsToTextFiles) -> {
+                            for (var p : pathsToTextFiles) {
                                 addChildToParent(textNode, new TreeItem<String>(p));
                             }
-                        } catch (Exception ex) {
-                            showError(
-                                    "Error occured while displaying extracted text files, they may have aleady been created in your specified directory.");
-                        }
-                        try {
-                            var pathsOfImg = writeAllImgFiles(allImages, to).get();
+                            showInfo("Textual Data Extraction Completed");
+                        });
+                    } catch (Exception ex) {
+                        showError(
+                                "Error occured while displaying extracted text files, they may have aleady been created in your specified directory.");
+                    }
+                    try {
+                        extractAllImages(pdfProcessor).thenCompose(allImages -> {
+                            return writeAllImgFiles(allImages, to);
+                        }).thenAccept(pathsOfImg -> {
                             for (var p : pathsOfImg) {
                                 addChildToParent(imgNode, new TreeItem<String>(p));
                             }
-                        } catch (Exception ex) {
-                            showError(
-                                    "Error occured while displaying extracted images, they may have aleady been created in your specified directory.");
-                        }
-                    });
+                            showInfo("Image Data Extraction Completed");
+                        });
+                    } catch (Exception ex) {
+                        showError(
+                                "Error occured while displaying extracted images, they may have aleady been created in your specified directory.");
+                    }
                 } catch (Exception excep) {
                     showError(excep.getMessage());
-                } finally {
-                    if (pdfProcessor != null)
-                        pdfProcessor.close();
                 }
             }
         });
@@ -237,6 +241,7 @@ public class Controller implements Initializable {
     public void addChildToParent(TreeItem<String> parentNode, TreeItem<String> childNode) {
         synchronized (parentNode) {
             Platform.runLater(() -> {
+                parentNode.setExpanded(true);
                 var childrenNodes = parentNode.getChildren();
                 childrenNodes.add(childNode);
             });
@@ -275,7 +280,7 @@ public class Controller implements Initializable {
      * @param processor PdfProcessor
      * @return a list of String, where each represents all the text in the page
      */
-    private Future<List<String>> extractAllText(PdfProcessor processor) {
+    private CompletableFuture<List<String>> extractAllText(PdfProcessor processor) {
         CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
         synchronized (processor) {
             new Thread(() -> {
@@ -292,7 +297,7 @@ public class Controller implements Initializable {
      * @param processor PdfProcessor
      * @return a list of buffered images
      */
-    private Future<List<BufferedImage>> extractAllImages(PdfProcessor processor) {
+    private CompletableFuture<List<BufferedImage>> extractAllImages(PdfProcessor processor) {
         CompletableFuture<List<BufferedImage>> completableFuture = new CompletableFuture<>();
         synchronized (processor) {
             new Thread(() -> {
@@ -311,7 +316,7 @@ public class Controller implements Initializable {
      * @param to      an absolute path to a directory
      * @return a list of absolute paths of these text files
      */
-    private Future<List<String>> writeAllTextFiles(List<String> allText, String to) {
+    private CompletableFuture<List<String>> writeAllTextFiles(List<String> allText, String to) {
         CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
         new Thread(() -> {
             List<String> paths = new ArrayList<>();
@@ -339,7 +344,7 @@ public class Controller implements Initializable {
      * @param to        an absolute path to a directory
      * @return a list of absolute paths of these images
      */
-    private Future<List<String>> writeAllImgFiles(List<BufferedImage> allImages, String to) {
+    private CompletableFuture<List<String>> writeAllImgFiles(List<BufferedImage> allImages, String to) {
         CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
         new Thread(() -> {
             List<String> paths = new ArrayList<>();
@@ -370,5 +375,4 @@ public class Controller implements Initializable {
         alert.setContentText(msg);
         alert.show();
     }
-
 }
