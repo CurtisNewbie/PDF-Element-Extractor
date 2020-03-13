@@ -362,13 +362,13 @@ public class Controller implements Initializable {
     private void showError(String msg) {
         var alert = new Alert(AlertType.ERROR);
         alert.setContentText(msg);
-        alert.showAndWait();
+        alert.show();
     }
 
     private void showInfo(String msg) {
         var alert = new Alert(AlertType.INFORMATION);
         alert.setContentText(msg);
-        alert.showAndWait();
+        alert.show();
     }
 
 }
