@@ -24,7 +24,7 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
-        <BorderPane minWidth="176.0" GridPane.columnIndex="3">
+        <BorderPane minWidth="-Infinity" GridPane.columnIndex="3">
             <top>
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Output" textAlignment="CENTER" wrappingWidth="89.7294921875" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
@@ -43,7 +43,7 @@
             </TreeView>
          </center>
         </BorderPane>
-        <AnchorPane maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS">
+        <AnchorPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="468.0" prefWidth="465.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS">
             <children>
                 <HBox layoutX="9.0" layoutY="117.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="445.0" AnchorPane.leftAnchor="9.0" AnchorPane.topAnchor="117.0">
                     <children>
