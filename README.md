@@ -7,6 +7,12 @@ Program that extracts elements such as img, text from a pdf file. This program i
 - Java 11
 - Maven (OPTIONAL)
 
+## How To Run It?
+
+Download the UI version in RELEASE, then execute the following command:
+
+    java -jar PDFElementExtractor-1.0.0-UI.jar
+
 ## Where Are The Extracted Data?
 
 All extracted data are placed under your specified directory (if it is valid). Two directories (`images/` and `text/`) are created for classification as follows:
