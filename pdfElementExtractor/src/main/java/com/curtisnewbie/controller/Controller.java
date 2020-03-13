@@ -114,7 +114,7 @@ public class Controller implements Initializable {
                     try {
                         desktop.open(file);
                     } catch (Exception excep) {
-                        logger.severe(excep.getMessage());
+                        showError("Failed to open directory.");
                     }
                 }).start();
             }
@@ -151,7 +151,8 @@ public class Controller implements Initializable {
                                 addChildToParent(textNode, new TreeItem<String>(p));
                             }
                         } catch (Exception ex) {
-                            logger.severe(ex.getMessage());
+                            showError(
+                                    "Error occured while showing paths to the extracted text files, they may have aleady been created in your specified directory.");
                         }
                         try {
                             var pathsOfImg = writeAllImgFiles(allImages, to).get();
@@ -159,13 +160,12 @@ public class Controller implements Initializable {
                                 addChildToParent(imgNode, new TreeItem<String>(p));
                             }
                         } catch (Exception ex) {
-                            logger.severe(ex.getMessage());
+                            showError(
+                                    "Error occured while showing paths to the extracted images, they may have aleady been created in your specified directory.");
                         }
                     });
                 } catch (Exception excep) {
-                    var alert = new Alert(AlertType.ERROR);
-                    alert.setContentText(excep.getMessage());
-                    alert.showAndWait();
+                    showError(excep.getMessage());
                 } finally {
                     if (pdfProcessor != null)
                         pdfProcessor.close();
@@ -356,6 +356,12 @@ public class Controller implements Initializable {
             completableFuture.complete(paths);
         }).start();
         return completableFuture;
+    }
+
+    private void showError(String msg) {
+        var alert = new Alert(AlertType.ERROR);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 
 }
