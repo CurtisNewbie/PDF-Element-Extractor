@@ -135,6 +135,8 @@ public class Controller implements Initializable {
                 try {
                     // create pdf representation
                     var document = IOManager.readPdfFile(getFromPath());
+                    if (pdfProcessor != null)
+                        pdfProcessor.close();
                     this.pdfProcessor = new PdfProcessor(document);
 
                     // init treeview
