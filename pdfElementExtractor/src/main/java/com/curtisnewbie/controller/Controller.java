@@ -152,7 +152,7 @@ public class Controller implements Initializable {
                             }
                         } catch (Exception ex) {
                             showError(
-                                    "Error occured while showing paths to the extracted text files, they may have aleady been created in your specified directory.");
+                                    "Error occured while displaying extracted text files, they may have aleady been created in your specified directory.");
                         }
                         try {
                             var pathsOfImg = writeAllImgFiles(allImages, to).get();
@@ -161,7 +161,7 @@ public class Controller implements Initializable {
                             }
                         } catch (Exception ex) {
                             showError(
-                                    "Error occured while showing paths to the extracted images, they may have aleady been created in your specified directory.");
+                                    "Error occured while displaying extracted images, they may have aleady been created in your specified directory.");
                         }
                     });
                 } catch (Exception excep) {
