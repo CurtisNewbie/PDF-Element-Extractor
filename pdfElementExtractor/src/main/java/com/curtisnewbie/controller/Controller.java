@@ -132,7 +132,6 @@ public class Controller implements Initializable {
             var from = getFromPath();
             var to = getToPath();
             if (from != null && to != null) {
-                showInfo("Extracting data from \"" + from + "\"");
                 try {
                     // create pdf representation
                     var document = IOManager.readPdfFile(getFromPath());
@@ -140,9 +139,9 @@ public class Controller implements Initializable {
 
                     // init treeview
                     var rootNode = setRootToOutputTreeView("ExtractedFiles");
-                    var textNode = new TreeItem<String>("Text:");
+                    var textNode = new TreeItem<String>("Extracted Text:");
                     addChildToParent(rootNode, textNode);
-                    var imgNode = new TreeItem<String>("Images:");
+                    var imgNode = new TreeItem<String>("Extracted Images:");
                     addChildToParent(rootNode, imgNode);
 
                     // extract and update using multi-threading and async
@@ -153,7 +152,7 @@ public class Controller implements Initializable {
                             for (var p : pathsToTextFiles) {
                                 addChildToParent(textNode, new TreeItem<String>(p));
                             }
-                            showInfo("Textual Data Extraction Completed");
+                            showInfo("Text Files Extraction Completed");
                         });
                     } catch (Exception ex) {
                         showError(
@@ -166,7 +165,7 @@ public class Controller implements Initializable {
                             for (var p : pathsOfImg) {
                                 addChildToParent(imgNode, new TreeItem<String>(p));
                             }
-                            showInfo("Image Data Extraction Completed");
+                            showInfo("Images Extraction Completed");
                         });
                     } catch (Exception ex) {
                         showError(
@@ -365,14 +364,18 @@ public class Controller implements Initializable {
     }
 
     private void showError(String msg) {
-        var alert = new Alert(AlertType.ERROR);
-        alert.setContentText(msg);
-        alert.show();
+        Platform.runLater(() -> {
+            var alert = new Alert(AlertType.ERROR);
+            alert.setContentText(msg);
+            alert.show();
+        });
     }
 
     private void showInfo(String msg) {
-        var alert = new Alert(AlertType.INFORMATION);
-        alert.setContentText(msg);
-        alert.show();
+        Platform.runLater(() -> {
+            var alert = new Alert(AlertType.INFORMATION);
+            alert.setContentText(msg);
+            alert.show();
+        });
     }
 }
