@@ -40,8 +40,8 @@ public class App extends Application {
 
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(1060);
-        primaryStage.setMinHeight(600);
+        primaryStage.setWidth(780);
+        primaryStage.setHeight(460);
         primaryStage.setResizable(false);
         primaryStage.show();
         primaryStage.setOnCloseRequest(e -> {
