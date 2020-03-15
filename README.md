@@ -39,7 +39,7 @@ You do not have to specify the page range. If you leave it empty, the program wi
 
     For example: 
     
-    If you enter in invalid string in "from" textfield and a number "10" in "to" textfield as follows: 
+    If you enter an invalid string in "from" textfield and a number "10" in "to" textfield as follows: 
     
         Page From "abc" To 10
     
