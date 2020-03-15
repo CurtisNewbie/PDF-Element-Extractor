@@ -13,6 +13,7 @@ import java.awt.image.*;
 import com.curtisnewbie.io.IOManager;
 import com.curtisnewbie.main.App;
 import com.curtisnewbie.main.LoggerProducer;
+import com.curtisnewbie.pdfprocess.PageRange;
 import com.curtisnewbie.pdfprocess.PdfProcessor;
 
 import javafx.application.Platform;
@@ -64,6 +65,12 @@ public class Controller implements Initializable {
 
     @FXML
     private Button openDirBtn;
+
+    @FXML
+    private TextField pageFromTextField;
+
+    @FXML
+    private TextField pageToTextField;
 
     /** Currently used pdfProcessor */
     private PdfProcessor pdfProcessor;
@@ -129,9 +136,9 @@ public class Controller implements Initializable {
     public void registerExtractAllEventHandler() {
         this.extractAllBtn.setOnAction(e -> {
             logger.info("Extracting all elements");
-            var from = getFromPath();
-            var to = getToPath();
-            if (from != null && to != null) {
+            var fromPath = getFromPath();
+            var toPath = getToPath();
+            if (fromPath != null && toPath != null) {
                 try {
                     // create pdf representation
                     var document = IOManager.readPdfFile(getFromPath());
@@ -146,10 +153,12 @@ public class Controller implements Initializable {
                     var imgNode = new TreeItem<String>("Extracted Images:");
                     addChildToParent(rootNode, imgNode);
 
-                    // extract and update using multi-threading and async
+                    // retrieve and validate page range
+                    var pageRange = pdfProcessor.validateAndReturnPageRange(getFromPage(), getToPage());
+                    // extract data and update view using multi-threading and async
                     try {
-                        extractAllText(pdfProcessor).thenCompose(allText -> {
-                            return writeAllTextFiles(allText, to);
+                        extractAllText(pdfProcessor, pageRange).thenCompose(allText -> {
+                            return writeAllTextFiles(allText, toPath, pageRange);
                         }).thenAccept((pathsToTextFiles) -> {
                             for (var p : pathsToTextFiles) {
                                 addChildToParent(textNode, new TreeItem<String>(p));
@@ -161,8 +170,8 @@ public class Controller implements Initializable {
                                 "Error occured while displaying extracted text files, they may have aleady been created in your specified directory.");
                     }
                     try {
-                        extractAllImages(pdfProcessor).thenCompose(allImages -> {
-                            return writeAllImgFiles(allImages, to);
+                        extractAllImages(pdfProcessor, pageRange).thenCompose(allImages -> {
+                            return writeAllImgFiles(allImages, toPath);
                         }).thenAccept(pathsOfImg -> {
                             for (var p : pathsOfImg) {
                                 addChildToParent(imgNode, new TreeItem<String>(p));
@@ -179,6 +188,40 @@ public class Controller implements Initializable {
             }
         });
 
+    }
+
+    /**
+     * Parse and get number in pageFromTextField
+     * 
+     * @return the specified page number if it's valid else return {@code 1}
+     */
+    public int getFromPage() {
+        var text = this.pageFromTextField.getText();
+        int fromPage = 1;
+        try {
+            if (text.length() > 0)
+                fromPage = Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            showError("\"Page From\" should be an integer");
+        }
+        return fromPage;
+    }
+
+    /**
+     * Parse and get number in pageToTextField
+     * 
+     * @return the specified page number if it's valid else return {@code -1}
+     */
+    public int getToPage() {
+        var text = this.pageToTextField.getText();
+        int toPage = -1;
+        try {
+            if (text.length() > 0)
+                toPage = Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            showError("\"Page To\" should be an integer");
+        }
+        return toPage;
     }
 
     /**
@@ -278,14 +321,15 @@ public class Controller implements Initializable {
     /**
      * Extract all text in the pdf file
      * 
+     * @param pageRange page range
      * @param processor PdfProcessor
      * @return a list of String, where each represents all the text in the page
      */
-    private CompletableFuture<List<String>> extractAllText(PdfProcessor processor) {
+    private CompletableFuture<List<String>> extractAllText(PdfProcessor processor, PageRange pageRange) {
         CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
         synchronized (processor) {
             new Thread(() -> {
-                var res = processor.extractText(1);
+                var res = processor.extractText(pageRange.getFromPage(), pageRange.getToPage(), 1);
                 completableFuture.complete(res);
             }).start();
         }
@@ -295,14 +339,15 @@ public class Controller implements Initializable {
     /**
      * Extract all images in the pdf file
      * 
+     * @param pageRange page range
      * @param processor PdfProcessor
      * @return a list of buffered images
      */
-    private CompletableFuture<List<BufferedImage>> extractAllImages(PdfProcessor processor) {
+    private CompletableFuture<List<BufferedImage>> extractAllImages(PdfProcessor processor, PageRange pageRange) {
         CompletableFuture<List<BufferedImage>> completableFuture = new CompletableFuture<>();
         synchronized (processor) {
             new Thread(() -> {
-                var res = processor.extractImages();
+                var res = processor.extractImages(pageRange.getFromPage(), pageRange.getToPage());
                 completableFuture.complete(res);
             }).start();
         }
@@ -313,20 +358,22 @@ public class Controller implements Initializable {
      * Write all text to a specified directory, this method takes advantage of
      * multi-threading
      * 
-     * @param allText a list of text
-     * @param to      an absolute path to a directory
+     * @param allText   a list of text
+     * @param to        an absolute path to a directory
+     * @param pageRange page range
      * @return a list of absolute paths of these text files
      */
-    private CompletableFuture<List<String>> writeAllTextFiles(List<String> allText, String to) {
+    private CompletableFuture<List<String>> writeAllTextFiles(List<String> allText, String to, PageRange pageRange) {
         CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
         new Thread(() -> {
             List<String> paths = new ArrayList<>();
             if (allText != null) {
-                int count = 0;
+                int from = pageRange.getFromPage();
                 for (var txt : allText) {
                     try {
-                        var path = IOManager.writeElementToFile(to, txt, "page" + (count++) + ".txt");
+                        var path = IOManager.writeElementToFile(to, txt, "page" + from + ".txt");
                         paths.add(path);
+                        from++;
                     } catch (Exception e) {
                         logger.severe(e.getMessage());
                     }

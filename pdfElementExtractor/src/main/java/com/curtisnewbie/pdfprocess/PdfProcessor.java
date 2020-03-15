@@ -29,14 +29,16 @@ import org.apache.pdfbox.text.PDFTextStripper;
  * 
  * <p>
  * Class that is responsible for processing the PDF file, e.g., extracting text
- * and so on. It must always be closed when done processing.
+ * and so on. It must always be closed when done processing. When using methods
+ * to extract data, the page range should be validated using
+ * {@link PdfProcessor#validateAndReturnPageRange(int, int)}. If the page range
+ * is invalid, there may be unexpected behaviours.
  * </p>
  * 
  */
 public class PdfProcessor {
 
     private PDDocument pdfDoc;
-
     private Logger logger = LoggerProducer.getLogger(this.getClass().getName());
 
     public PdfProcessor(PDDocument pdfDoc) throws NullPointerException {
@@ -51,15 +53,12 @@ public class PdfProcessor {
      * @return all text in the specified pages
      */
     public String extractText(int from, int to) {
+        logger.info(String.format("Extracting text from pages %d-%d", from, to));
         try {
-            var pages = pdfDoc.getNumberOfPages();
-            if (from <= 0 || to > pages) {
-                return null;
-            }
-
             PDFTextStripper textStripper = new PDFTextStripper();
             textStripper.setStartPage(from);
             textStripper.setEndPage(to);
+
             Writer writer = new CharArrayWriter();
             textStripper.writeText(pdfDoc, writer);
             return writer.toString();
@@ -79,23 +78,23 @@ public class PdfProcessor {
      * @return all text in the specified pages
      */
     public List<String> extractText(int from, int to, int every) {
-        var pages = pdfDoc.getNumberOfPages();
-        if (from <= 0 || to > pages) {
-            return null;
-        }
-        if (to - from + 1 < every) {
+        List<String> list = new ArrayList<>();
+        if (from != to && to - from + 1 < every) {
             every = to - from + 1;
         }
-
-        List<String> list = new ArrayList<>();
-        for (int i = from; i < to; i += every + 1) {
-            // remaining pages
-            if (i + every > to && i < to) {
-                list.add(extractText(i, to));
+        if (to == from) {
+            list.add(extractText(from, to));
+            return list;
+        } else {
+            for (int i = from; i < to; i += every) {
+                // remaining pages
+                if (i + every >= to) {
+                    list.add(extractText(i, to));
+                }
+                list.add(extractText(i, i + every));
             }
-            list.add(extractText(i, i + every));
+            return list;
         }
-        return list;
     }
 
     /**
@@ -139,11 +138,6 @@ public class PdfProcessor {
      */
     public List<BufferedImage> extractImages(int from, int to) {
         logger.info(String.format("Extracting images from pages %d-%d", from, to));
-        var pages = pdfDoc.getNumberOfPages();
-        if (from <= 0 || to > pages) {
-            return null;
-        }
-
         List<BufferedImage> images = new ArrayList<>();
         for (int i = from; i < to; i++) {
             var currPage = pdfDoc.getPage(i);
@@ -188,4 +182,31 @@ public class PdfProcessor {
         }
     }
 
+    /**
+     * <p>
+     * Validate if the given page range is valid, if not it returns a valid page
+     * range by correcting the invalid values.
+     * </p>
+     * <p>
+     * For example, if the given from page is less than 1, then it returns 1 as a
+     * valid number.
+     * </p>
+     * 
+     * @param fromPage
+     * @param toPage
+     * @return validated page range
+     */
+    public PageRange validateAndReturnPageRange(int fromPage, int toPage) {
+        var pages = pdfDoc.getNumberOfPages();
+        if (fromPage <= 0)
+            fromPage = 1;
+        else if (fromPage > pages)
+            fromPage = pages;
+
+        if (toPage > pages || toPage < 0)
+            toPage = pages;
+        if (toPage < fromPage)
+            toPage = fromPage;
+        return new PageRange(fromPage, toPage);
+    }
 }

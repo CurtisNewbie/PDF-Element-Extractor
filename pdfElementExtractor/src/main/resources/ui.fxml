@@ -21,7 +21,7 @@
     </columnConstraints>
     <rowConstraints>
         <RowConstraints maxHeight="420.0" minHeight="10.0" percentHeight="45.0" prefHeight="208.0" vgrow="NEVER" />
-      <RowConstraints maxHeight="217.0" minHeight="0.0" percentHeight="55.0" prefHeight="212.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="217.0" minHeight="0.0" percentHeight="55.0" prefHeight="212.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
         <BorderPane minWidth="-Infinity" GridPane.columnIndex="2" GridPane.rowIndex="1">
@@ -35,13 +35,13 @@
                     </font>
                 </Text>
             </top>
-         <center>
+            <center>
                 <TreeView fx:id="outputTreeView" prefHeight="413.0" prefWidth="293.0" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets bottom="10.0" left="6.0" right="6.0" />
-               </BorderPane.margin>
-            </TreeView>
-         </center>
+                    <BorderPane.margin>
+                        <Insets bottom="10.0" left="6.0" right="6.0" />
+                    </BorderPane.margin>
+                </TreeView>
+            </center>
         </BorderPane>
         <AnchorPane maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS">
             <children>
@@ -55,7 +55,7 @@
                         <TextField fx:id="pathFromTextField" maxHeight="26.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
-                <HBox layoutX="29.0" layoutY="190.0" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="445.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="190.0">
+                <HBox layoutX="29.0" layoutY="172.0" maxWidth="1.7976931348623157E308" prefHeight="38.0" prefWidth="445.0" AnchorPane.leftAnchor="29.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="172.0">
                     <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Path to Extracted Files: (Directory)" textAlignment="CENTER" wrappingWidth="159.16455078125">
                             <HBox.margin>
@@ -63,9 +63,10 @@
                             </HBox.margin>
                         </Text>
                         <TextField fx:id="pathToTextField" maxHeight="26.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" HBox.hgrow="ALWAYS">
-                     <HBox.margin>
-                        <Insets bottom="1.0" left="1.0" top="5.0" />
-                     </HBox.margin></TextField>
+                            <HBox.margin>
+                                <Insets bottom="1.0" left="1.0" top="5.0" />
+                            </HBox.margin>
+                        </TextField>
                     </children>
                 </HBox>
                 <Text layoutX="36.0" layoutY="74.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PDF Elements Extractor" wrappingWidth="300.7294921875" AnchorPane.bottomAnchor="320.8115234375" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="166.2705078125" AnchorPane.topAnchor="53.5791015625">
@@ -74,9 +75,33 @@
                     </font>
                 </Text>
                 <Button fx:id="extractAllBtn" layoutX="343.0" layoutY="314.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Extract All" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="314.0" />
-                <Button fx:id="chooseFileBtn" layoutX="381.0" layoutY="146.0" mnemonicParsing="false" text="Choose File" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="146.0" />
-                <Button fx:id="chooseDirBtn" layoutX="343.0" layoutY="244.0" mnemonicParsing="false" text="Choose Directory" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="244.0" />
+                <Button fx:id="chooseFileBtn" layoutX="382.0" layoutY="136.0" mnemonicParsing="false" text="Choose File" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="136.0" />
+                <Button fx:id="chooseDirBtn" layoutX="344.0" layoutY="216.0" mnemonicParsing="false" text="Choose Directory" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="216.0" />
                 <Button fx:id="openDirBtn" layoutX="186.0" layoutY="314.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="131.0" text="Open Directory" AnchorPane.rightAnchor="186.0" AnchorPane.topAnchor="314.0" />
+                <HBox layoutX="29.0" layoutY="258.0" prefHeight="32.0" prefWidth="446.0">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Page - From">
+                            <HBox.margin>
+                                <Insets right="3.0" top="6.0" />
+                            </HBox.margin>
+                        </Text>
+                        <TextField fx:id="pageFromTextField" prefHeight="26.0" prefWidth="80.0">
+                            <HBox.margin>
+                                <Insets left="3.0" right="3.0" top="3.0" />
+                            </HBox.margin>
+                        </TextField>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="To">
+                            <HBox.margin>
+                                <Insets left="4.0" right="3.0" top="6.0" />
+                            </HBox.margin>
+                        </Text>
+                        <TextField fx:id="pageToTextField" prefHeight="26.0" prefWidth="80.0">
+                            <HBox.margin>
+                                <Insets left="3.0" right="3.0" top="3.0" />
+                            </HBox.margin>
+                        </TextField>
+                    </children>
+                </HBox>
             </children>
         </AnchorPane>
     </children>
