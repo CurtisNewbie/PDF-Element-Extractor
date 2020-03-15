@@ -33,6 +33,18 @@ All extracted data are placed under your specified directory (if it is valid). T
                                       |
                                       |_ page1.txt
 
+## Page Range
+
+You do not have to specify the page range. If you leave it empty, the program will extract data from all pages. If you only enter "from" textfield or only "to" textfield or an invalid entry, the program will automatically correct it for you. An invalid entry can be anything that is not a valid Integer or a number that exceeds the correct page range. 
+
+    For example: 
+    
+    If you enter in invalid string in "from" textfield and a number "10" in "to" textfield as follows: 
+    
+        Page From "abc" To 10
+    
+    It will extract data from page 1 to page 10. 
+
 ## Demo
 
 <img src="https://user-images.githubusercontent.com/45169791/76706673-391b8100-66e1-11ea-97fd-b014b419b771.gif" height="600">
