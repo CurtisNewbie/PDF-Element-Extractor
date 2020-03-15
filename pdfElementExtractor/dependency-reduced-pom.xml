@@ -4,8 +4,9 @@
   <groupId>com.curtisnewbie</groupId>
   <artifactId>pdfElementExtractor</artifactId>
   <name>pdfElementExtractor</name>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <build>
+    <finalName>PDFElementExtractor-${version}-UI</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
@@ -52,6 +53,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.2</version>
         <executions>
           <execution>
             <phase>package</phase>

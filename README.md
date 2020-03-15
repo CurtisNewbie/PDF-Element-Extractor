@@ -11,7 +11,7 @@ Program that extracts elements such as img, text from a pdf file. This program i
 
 Download the UI version in RELEASE, then execute the following command:
 
-    java -jar PDFElementExtractor-1.0.0-UI.jar
+    java -jar PDFElementExtractor-1.0.1-UI.jar
 
 ## Where Are The Extracted Data?
 
