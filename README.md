@@ -35,4 +35,4 @@ All extracted data are placed under your specified directory (if it is valid). T
 
 ## Demo
 
-<img src="https://user-images.githubusercontent.com/45169791/76635690-be673000-653f-11ea-8eb1-9fa4482c69a2.gif">
+<img src="https://user-images.githubusercontent.com/45169791/76706673-391b8100-66e1-11ea-97fd-b014b419b771.gif" height="600">
